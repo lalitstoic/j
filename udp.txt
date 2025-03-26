@@ -1,0 +1,79 @@
+
+// UPDserver.java 
+import java.io.*;
+import java.net.*;
+
+public class UDP_Factorial_server {
+    public static void main(String[] args) {
+        try {
+            int port = 1234;
+            DatagramSocket ds = new DatagramSocket(port);
+            System.out.println("Waiting for Client ...");
+
+            while (true) {
+                byte b[] = new byte[1024];
+                DatagramPacket dp1 = new DatagramPacket(b, b.length);
+                ds.receive(dp1);
+
+                String str = new String(dp1.getData(), 0, dp1.getLength());
+                System.out.println("Request From Client = " + str);
+
+                if (str.equals("end")) {
+                    System.exit(0);
+                }
+
+                int num = Integer.parseInt(str);
+                int f = 1;
+                for (int i = 1; i <= num; i++) {
+                    f = f * i;
+                }
+
+                String res = "Factorial=" + f;
+                byte b1[] = res.getBytes();
+
+                InetAddress clientAddress = dp1.getAddress(); // Fix: Get client’s address dynamically
+                int clientPort = dp1.getPort(); // Fix: Get client’s port dynamically
+
+                DatagramPacket dp2 = new DatagramPacket(b1, b1.length, clientAddress, clientPort);
+                ds.send(dp2);
+            }
+        } catch (Exception e) {
+            System.out.println("Error = " + e);
+        }
+    }
+}
+// UDPclient.java
+import java.io.*;
+import java.net.*;
+
+public class UDPClient {
+    public static void main(String[] args) {
+        try {
+            DatagramSocket ds = new DatagramSocket(); // Fix: Don't bind to a specific port
+            InetAddress addr = InetAddress.getLocalHost(); // Fix: Use getLocalHost()
+
+            while (true) {
+                System.out.println("Enter The Number :");
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                String str = br.readLine();
+
+                byte b[] = str.getBytes();
+                DatagramPacket dp1 = new DatagramPacket(b, b.length, addr, 1234);
+                ds.send(dp1);
+
+                if (str.equals("end")) {
+                    System.exit(0);
+                }
+
+                byte b1[] = new byte[1024];
+                DatagramPacket dp2 = new DatagramPacket(b1, b1.length);
+                ds.receive(dp2);
+
+                String res = new String(dp2.getData(), 0, dp2.getLength());
+                System.out.println("Response From Server : " + res);
+            }
+        } catch (Exception e) {
+            System.out.println("Error = " + e);
+        }
+    }
+}

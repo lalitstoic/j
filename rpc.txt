@@ -1,0 +1,112 @@
+
+// RPC_Server.java
+import java.io.*;
+import java.net.*;
+
+public class RPC_Server {
+    public static void main(String[] args) {
+        System.out.println("Bhavya Shah, 84");
+
+        try {
+            int port = 8008;
+            ServerSocket ss = new ServerSocket(port);
+            System.out.println("Waiting for Client ...");
+            Socket s = ss.accept();
+            System.out.println("Connection is done ...");
+
+            while (true) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                int n1 = Integer.parseInt(br.readLine());
+                int n2 = Integer.parseInt(br.readLine());
+                String sign = br.readLine();
+
+                System.out.println("Data From Client :");
+                System.out.println("n1 = " + n1);
+                System.out.println("n2 = " + n2);
+                System.out.println("sign = " + sign);
+
+                int ans = 0;
+                if (sign.equals("+")) {
+                    ans = n1 + n2;
+                } else if (sign.equals("-")) {
+                    ans = n1 - n2;
+                } else if (sign.equals("*")) {
+                    ans = n1 * n2;
+                } else if (sign.equals("/")) {
+                    ans = n1 / n2;
+                } else {
+                    ans = 0;
+                }
+
+                String res = "Answer = " + ans;
+                PrintWriter pw = new PrintWriter(s.getOutputStream(), true); // Fix: Auto-flush enabled
+                pw.println(res);
+
+                // Optional: Stop server if client sends "exit"
+                if (sign.equals("exit")) {
+                    System.out.println("Server shutting down...");
+                    break;
+                }
+            }
+
+            // Close resources
+            s.close();
+            ss.close();
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex);
+        }
+    }
+}
+// RPC_Client.java
+import java.io.*;
+import java.net.*;
+
+public class RPC_Client {
+    public static void main(String[] args) {
+        System.out.println("Bhavya Shah, 84");
+
+        try {
+            int port = 8008;
+            InetAddress addr = InetAddress.getLocalHost(); // Fix: Use getLocalHost() for proper IP resolution
+            System.out.println("IP-Address: " + addr);
+            Socket s = new Socket(addr, port);
+            System.out.println("Connection is done ...");
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            PrintWriter pw = new PrintWriter(s.getOutputStream(), true); // Fix: Enable auto-flush
+
+            while (true) {
+                System.out.println("Enter The TWO Numbers: ");
+                String str = br.readLine();
+
+                if (str.equalsIgnoreCase("exit")) {
+                    System.out.println("Client shutting down...");
+                    break;
+                }
+
+                int n1 = Integer.parseInt(str);
+                int n2 = Integer.parseInt(br.readLine());
+
+                System.out.println("Enter The Operation Sign (+, -, *, /): ");
+                String sign = br.readLine();
+
+                // Send data to the server
+                pw.println(n1);
+                pw.println(n2);
+                pw.println(sign);
+
+                // Receive response from the server
+                BufferedReader br1 = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                String res = br1.readLine();
+                System.out.println("Response From Server: " + res);
+            }
+
+            // Close resources properly
+            pw.close();
+            br.close();
+            s.close();
+        } catch (Exception ex) {
+            System.out.println("Error: " + ex);
+        }
+    }
+}
