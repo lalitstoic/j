@@ -4,7 +4,7 @@ import java.net.*;
 
 public class RPC_Server { 
     public static void main(String[] args) { 
-        System.out.println("Bhavya Shah, 84"); 
+        System.out.println("Lalit Soni, 96"); 
 
         try { 
             int port = 8008; 
@@ -55,7 +55,7 @@ import java.net.*;
 
 public class RPC_Client { 
     public static void main(String[] args) { 
-        System.out.println("Bhavya Shah, 84"); 
+        System.out.println("Lalit Soni, 96"); 
         
         try { 
             int port = 8008; 

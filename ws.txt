@@ -6,7 +6,7 @@ import javax.jws.WebParam;
 
 /**
  * Web Service for Calculator Operations
- * @author Bhavya
+ * @author Lalit
  */
 @WebService(serviceName = "CalculatorService") 
 public class Calc { 
